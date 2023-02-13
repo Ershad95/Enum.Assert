@@ -55,7 +55,7 @@ namespace lib
         // Act 
         const bool actual = {@enum.Name.ToLower()} == ({type}){titleItem};
         // Assert 
-        actual.ShouldBeTrue();");
+        Assert.True(actual)");
                     fileContent.Append("\n");
                     fileContent.Append($"\n}}");
                 }
