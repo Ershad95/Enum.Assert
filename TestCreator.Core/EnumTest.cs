@@ -1,4 +1,6 @@
-﻿namespace TestCreator.Core
+﻿using Microsoft.Extensions.DependencyInjection;
+
+namespace TestCreator.Core
 {
     public static class EnumTest
     {
@@ -15,5 +17,16 @@
 
             Helper.CreateUnitTestFile(path,selectedAssembly);
         }
+        
+       
     }
+    public static class ServicesExtensions
+    {
+        public static void WriteUnitTest(this IServiceCollection services,string path, string[] selectedAssembly)
+        {
+            EnumTest.WriteUnitTest(path,selectedAssembly);
+        }
+    }
+
+   
 }
