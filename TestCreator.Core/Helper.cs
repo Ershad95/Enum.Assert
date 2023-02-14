@@ -23,8 +23,7 @@ public static class Helper
         var nameSpace = @enum.FullName!.Replace($".{@enum.Name}", string.Empty);
         fileContent.Append($"namespace unitTest.{@enum.Name};\nusing {nameSpace};\n");
         fileContent.Append($"public class {@enum.Name}UnitTest \n{{ \n");
-
-
+        
         foreach (var item in @enum.GetEnumValues())
         {
             var valueItem = (long)Convert.ChangeType(item, typeof(long));
