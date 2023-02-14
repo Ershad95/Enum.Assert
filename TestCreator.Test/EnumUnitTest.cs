@@ -1,5 +1,5 @@
-using lib;
 using System;
+using TestCreator.Core;
 using Xunit;
 
 namespace TestCreator.Test
@@ -10,55 +10,56 @@ namespace TestCreator.Test
         public void WriteUnitTest_PathIsNull_ThrowArgumentNullException()
         {
             // Arrange
-            string path = null;
+            string path = null!;
             // Act
-            Action action = () =>
+            void Action()
             {
                 EnumTest.WriteUnitTest(path, new string[] { "" });
-            };
+            }
+
             // Assert 
-            Assert.Throws<ArgumentNullException>(action);
+            Assert.Throws<ArgumentException>((Action)Action);
         }
         [Fact]
         public void WriteUnitTest_PathIsEmptyString_ThrowArgumentNullException()
         {
             // Arrange
-            string path = string.Empty;
+            var path = string.Empty;
             // Act
-            Action action = () =>
-            {
-                EnumTest.WriteUnitTest(path,new string[] {""});
-            };
+            void Action() => EnumTest.WriteUnitTest(path, new[] { "" });
+
             // Assert 
-            Assert.Throws<ArgumentNullException>(action);
+            Assert.Throws<ArgumentException>((Action)Action);
         }
 
         [Fact]
         public void WriteUnitTest_PathIsNotExist_ThrowArgumentNullException()
         {
             // Arrange
-            string path = "ljdkfjdkfdf";
+            const string path = "ljdkfjdkfdf";
             // Act
-            Action action = () =>
+            void Action()
             {
-                EnumTest.WriteUnitTest(path, new string[] { "" });
-            };
+                EnumTest.WriteUnitTest(path, new[] { "" });
+            }
+
             // Assert 
-            Assert.Throws<ArgumentNullException>(action);
+            Assert.Throws<ArgumentException>((Action)Action);
         }
 
         [Fact]
-        public void WriteUnitTest_AsseblyIsEmpty_ThrowArgumentException()
+        public void WriteUnitTest_AssemblyIsEmpty_ThrowArgumentException()
         {
             // Arrange
-            string path = Environment.CurrentDirectory;
+            var path = Environment.CurrentDirectory;
             // Act
-            Action action = () =>
+            void Action()
             {
-                EnumTest.WriteUnitTest(path, new string[] {});
-            };
+                EnumTest.WriteUnitTest(path, Array.Empty<string>());
+            }
+
             // Assert 
-            Assert.Throws<ArgumentException>(action);
+            Assert.Throws<ArgumentException>((Action)Action);
         }
     }
 }
