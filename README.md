@@ -7,7 +7,7 @@ overLoad Of client api :
 
 <pre>static void WriteUnitTest(IDictionary<string, string> selectedAssembly)</pre>
 
-overLoad Of ServicesExtensions: 
+overLoad Of Extensions IServiceCollection: 
 
 <pre>static void WriteUnitTest(this IServiceCollection services, string path, string[] selectedAssembly)</pre>
 
