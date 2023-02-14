@@ -46,7 +46,7 @@ public static class Helper
         // Assert 
         Assert.True(actual);");
             fileContent.Append("\n");
-            fileContent.Append($"\n}}");
+            fileContent.Append("\n}}");
         }
 
         fileContent.Append($"\n}}");
