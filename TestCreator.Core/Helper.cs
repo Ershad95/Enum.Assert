@@ -7,7 +7,7 @@ public static class Helper
 {
     internal static void CreateUnitTestFile(string path, IEnumerable<string> selectedAssembly)
     {
-        foreach (var @enum in GetEnumsFromEntryAssembly(selectedAssembly))
+        foreach (var @enum in GetEnumsFromAssemblies(selectedAssembly))
         {
             if (File.Exists(@$"{path}/{@enum.Name}.cs")) continue;
             File.WriteAllText(@$"{path}/{@enum.Name}.cs", CreateFileContent(@enum));
@@ -52,7 +52,7 @@ public static class Helper
         return fileContent.ToString();
     }
 
-    private static IEnumerable<TypeInfo> GetEnumsFromEntryAssembly(IEnumerable<string> selectedAssembly)
+    private static IEnumerable<TypeInfo> GetEnumsFromAssemblies(IEnumerable<string> selectedAssembly)
     {
         var allAssembly = AppDomain.CurrentDomain.GetAssemblies();
         if (allAssembly is null)
