@@ -10,7 +10,7 @@ public static class Helper
         foreach (var @enum in GetEnumsFromAssemblies(selectedAssembly))
         {
             if (File.Exists(@$"{path}/{@enum.Name}.cs")) continue;
-            File.WriteAllText(@$"{path}/{@enum.Name}.cs", CreateFileContent(@enum));
+            File.WriteAllText(@$"{path}/{@enum.Name}UnitTest.cs", CreateFileContent(@enum));
         }
     }
 
@@ -20,7 +20,8 @@ public static class Helper
         var minValueItem = long.MaxValue;
         var maxValueItem = long.MinValue;
 
-        fileContent.Append($"namespace unitTest.{@enum.Name};\nusing {AppDomain.CurrentDomain.FriendlyName};\n");
+        var nameSpace = @enum.FullName!.Replace($".{@enum.Name}", string.Empty);
+        fileContent.Append($"namespace unitTest.{@enum.Name};\nusing {nameSpace};\n");
         fileContent.Append($"public class {@enum.Name}UnitTest \n{{ \n");
 
 
@@ -43,7 +44,7 @@ public static class Helper
         // Act 
         const bool actual = {@enum.Name.ToLower()} == ({type}){titleItem};
         // Assert 
-        Assert.True(actual)");
+        Assert.True(actual);");
             fileContent.Append("\n");
             fileContent.Append($"\n}}");
         }
