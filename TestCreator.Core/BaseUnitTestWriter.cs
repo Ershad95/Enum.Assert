@@ -39,6 +39,11 @@ namespace TestCreator.Core
             return fileContent.ToString();
         }
 
+        /// <summary>
+        /// you can customize generation class
+        /// </summary>
+        /// <param name="fileContent"></param>
+        /// <param name="enum"></param>
         protected virtual void WriteClassTest(StringBuilder fileContent, Type @enum)
         {
             WriteClassAttribute(fileContent);
@@ -53,6 +58,13 @@ namespace TestCreator.Core
             fileContent.Append("\n}");
         }
 
+        /// <summary>
+        /// you can customize all of the test methods
+        /// </summary>
+        /// <param name="fileContent"></param>
+        /// <param name="enumItem"></param>
+        /// <param name="valueItem"></param>
+        /// <param name="enum"></param>
         protected virtual void WriteMethodTest(StringBuilder fileContent, string enumItem, long valueItem, MemberInfo @enum)
         {
             WriteMethodAttribute(fileContent);
@@ -117,7 +129,7 @@ namespace TestCreator.Core
             }
         }
 
-        private void WriteNamespace(StringBuilder fileContent, Type @enum)
+        protected virtual void WriteNamespace(StringBuilder fileContent, Type @enum)
         {
             WriteEnumNameSpace(fileContent, @enum);
             WriteAssertNameSpace(fileContent);
