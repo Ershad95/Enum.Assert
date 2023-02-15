@@ -1,8 +1,10 @@
-﻿namespace TestCreator.Core;
-
-public enum AssertType : byte
+﻿namespace TestCreator.Core
 {
-    Assert = 1,
-    Shouldly=2,
-    FluentAssertions = 3,
+    public enum AssertType : byte
+    {
+        Assert = 1,
+        Shouldly=2,
+        FluentAssertions = 3,
+    }
 }
+

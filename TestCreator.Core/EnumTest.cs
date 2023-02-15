@@ -1,5 +1,4 @@
-﻿
-namespace TestCreator.Core
+﻿namespace TestCreator.Core
 {
     public static class EnumTest
     {
