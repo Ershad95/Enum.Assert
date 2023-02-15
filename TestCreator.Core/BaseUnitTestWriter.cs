@@ -171,7 +171,7 @@ namespace TestCreator.Core
 
         private static string ConvertNumberToText(long valueItem)
         {
-            var positive = Math.Abs(valueItem);
+            var positiveValue = Math.Abs(valueItem);
             var result = Math.Abs(valueItem) switch
             {
                 0 => "Zero",
@@ -184,7 +184,7 @@ namespace TestCreator.Core
                 7 => "Seven",
                 8 => "Eight",
                 9 => "Nine",
-                _ => positive.ToString()
+                _ => positiveValue.ToString()
             };
 
             if (valueItem < 0)

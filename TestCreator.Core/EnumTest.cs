@@ -11,8 +11,8 @@
         /// <param name="unitTestFrameworkType">Select unitTest Framework</param>
         /// <exception cref="ArgumentException">when Entry data is invalid</exception>
         public static void CreateUnitTestFilesFromAssemblies(string path, string[] selectedAssembly,
-            AssertType assertType = AssertType.Assert,
-            UnitTestFrameworkType unitTestFrameworkType = UnitTestFrameworkType.XUnit)
+            AssertType assertType,
+            UnitTestFrameworkType unitTestFrameworkType)
         {
             if (string.IsNullOrEmpty(path))
                 throw new ArgumentException("path is null");
@@ -53,8 +53,8 @@
         /// <param name="assertType">Select Assert Type</param>
         /// <param name="unitTestFrameworkType">Select unitTest Framework</param>
         public static void CreateUnitTestFilesFromAssemblies(IDictionary<string, string> selectedAssembly,
-            AssertType assertType = AssertType.Assert,
-            UnitTestFrameworkType unitTestFrameworkType = UnitTestFrameworkType.XUnit)
+            AssertType assertType,
+            UnitTestFrameworkType unitTestFrameworkType)
         {
             foreach (var assembly in selectedAssembly)
             {

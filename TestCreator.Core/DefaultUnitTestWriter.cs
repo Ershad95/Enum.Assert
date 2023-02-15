@@ -1,6 +1,6 @@
-﻿namespace TestCreator.Core;
+﻿using System.Reflection;
+using System.Text;
 
-internal class DefaultUnitTestWriter : BaseUnitTestWriter
-{
-    
-}
+namespace TestCreator.Core;
+
+internal class DefaultUnitTestWriter : BaseUnitTestWriter { }
