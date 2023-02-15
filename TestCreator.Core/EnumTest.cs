@@ -7,30 +7,71 @@
         /// </summary>
         /// <param name="path">path of unitTest creation</param>
         /// <param name="selectedAssembly">List Of Ass that you want Find Enums and Write Unit tests</param>
+        /// <param name="assertType">Select Assert Type</param>
+        /// <param name="unitTestFrameworkType">Select unitTest Framework</param>
         /// <exception cref="ArgumentException">when Entry data is invalid</exception>
-        public static void CreateUnitTestFilesFromAssemblies(string path, string[] selectedAssembly)
+        public static void CreateUnitTestFilesFromAssemblies(string path, string[] selectedAssembly,
+            AssertType assertType = AssertType.Assert,
+            UnitTestFrameworkType unitTestFrameworkType = UnitTestFrameworkType.XUnit)
         {
             if (string.IsNullOrEmpty(path))
                 throw new ArgumentException("path is null");
-            
+
             if (!Directory.Exists(path))
                 throw new ArgumentException("path is not valid");
 
             if (!selectedAssembly.Any())
                 throw new ArgumentException("selectedAssemly not given");
 
-            new BaseUnitTestWriter().CreateUnitTestFile(path, selectedAssembly);
+            var baseUnitTestWriter = new DefaultUnitTestWriter();
+            baseUnitTestWriter.SetAssertType(assertType);
+            baseUnitTestWriter.SetUnitTestFrameworkType(unitTestFrameworkType);
+            baseUnitTestWriter.CreateUnitTestFile(path, selectedAssembly);
+        }
+        
+        public static void CreateUnitTestFilesFromAssemblies(
+            string path, 
+            string[] selectedAssembly,
+            BaseUnitTestWriter baseUnitTestWriter = default)
+        {
+            if (string.IsNullOrEmpty(path))
+                throw new ArgumentException("path is null");
+
+            if (!Directory.Exists(path))
+                throw new ArgumentException("path is not valid");
+
+            if (!selectedAssembly.Any())
+                throw new ArgumentException("selectedAssemly not given");
+            
+            if (baseUnitTestWriter is null or null)
+            {
+                baseUnitTestWriter = new DefaultUnitTestWriter();
+            }
+            baseUnitTestWriter.CreateUnitTestFile(path, selectedAssembly);
         }
 
         /// <summary>
         /// Create Unit Test For Enums
         /// </summary>
         /// <param name="selectedAssembly">key : Assembly Name , Value : path of unitTest creation</param>
-        public static void CreateUnitTestFilesFromAssemblies(IDictionary<string, string> selectedAssembly)
+        /// <param name="assertType">Select Assert Type</param>
+        /// <param name="unitTestFrameworkType">Select unitTest Framework</param>
+        public static void CreateUnitTestFilesFromAssemblies(IDictionary<string, string> selectedAssembly,
+            AssertType assertType = AssertType.Assert,
+            UnitTestFrameworkType unitTestFrameworkType = UnitTestFrameworkType.XUnit)
         {
             foreach (var assembly in selectedAssembly)
             {
-                CreateUnitTestFilesFromAssemblies(assembly.Value, new[] { assembly.Key });
+                CreateUnitTestFilesFromAssemblies(assembly.Value, new[] { assembly.Key }, assertType, unitTestFrameworkType);
+            }
+        }
+        
+        public static void CreateUnitTestFilesFromAssemblies(IDictionary<string, string> selectedAssembly,
+            BaseUnitTestWriter baseUnitTestWriter = default)
+        {
+            foreach (var assembly in selectedAssembly)
+            {
+                CreateUnitTestFilesFromAssemblies(assembly.Value, new[] { assembly.Key }, baseUnitTestWriter);
             }
         }
     }

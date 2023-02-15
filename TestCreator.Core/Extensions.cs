@@ -1,9 +1,7 @@
-﻿using System.Reflection;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 
 namespace TestCreator.Core
 {
-    
     public static class ServiceCollectionExtensions
     {
         /// <summary>
@@ -12,10 +10,16 @@ namespace TestCreator.Core
         /// <param name="services"></param>
         /// <param name="path">path of unitTest creation</param>
         /// <param name="selectedAssembly">List Of Ass that you want Find Enums and Write Unit tests</param>
+        /// <param name="assertType"></param>
+        /// <param name="unitTestFrameworkType"></param>
         /// <exception cref="ArgumentException">when Entry data is invalid</exception>
-        public static void WriteUnitTest(this IServiceCollection services, string path, string[] selectedAssembly)
+        public static void WriteUnitTest(this IServiceCollection services,
+            string path,
+            string[] selectedAssembly,
+            AssertType assertType = AssertType.Assert,
+            UnitTestFrameworkType unitTestFrameworkType = UnitTestFrameworkType.XUnit)
         {
-            EnumTest.CreateUnitTestFilesFromAssemblies(path, selectedAssembly);
+            EnumTest.CreateUnitTestFilesFromAssemblies(path, selectedAssembly, assertType, unitTestFrameworkType);
         }
 
         /// <summary>
@@ -23,23 +27,44 @@ namespace TestCreator.Core
         /// </summary>
         /// <param name="services"></param>
         /// <param name="selectedAssembly">key : Assembly Name , Value : path of unitTest creation</param>
-        public static void WriteUnitTest(this IServiceCollection services, IDictionary<string, string> selectedAssembly)
+        /// <param name="assertType"></param>
+        /// <param name="unitTestFrameworkType"></param>
+        public static void WriteUnitTest(this IServiceCollection services,
+            IDictionary<string, string> selectedAssembly,
+            AssertType assertType = AssertType.Assert,
+            UnitTestFrameworkType unitTestFrameworkType = UnitTestFrameworkType.XUnit)
         {
-            EnumTest.CreateUnitTestFilesFromAssemblies(selectedAssembly);
+            EnumTest.CreateUnitTestFilesFromAssemblies(selectedAssembly, assertType, unitTestFrameworkType);
         }
-    }
 
-    public static class AssemblyExtensions
-    {
+
         /// <summary>
         /// Create Unit Test For Enums
         /// </summary>
-        /// <param name="assembly"></param>
+        /// <param name="services"></param>
         /// <param name="path">path of unitTest creation</param>
+        /// <param name="selectedAssembly">List Of Ass that you want Find Enums and Write Unit tests</param>
+        /// <param name="baseUnitTestWriter"></param>
         /// <exception cref="ArgumentException">when Entry data is invalid</exception>
-        public static void WriteUnitTest(this Assembly @assembly, string path)
+        public static void WriteUnitTest(this IServiceCollection services,
+            string path,
+            string[] selectedAssembly,
+            BaseUnitTestWriter baseUnitTestWriter = default)
         {
-            EnumTest.CreateUnitTestFilesFromAssemblies(path,new []{@assembly.FullName!});
+            EnumTest.CreateUnitTestFilesFromAssemblies(path, selectedAssembly, baseUnitTestWriter);
+        }
+
+        /// <summary>
+        /// Create Unit Test For Enums
+        /// </summary>
+        /// <param name="services"></param>
+        /// <param name="selectedAssembly">key : Assembly Name , Value : path of unitTest creation</param>
+        /// <param name="baseUnitTestWriter"></param>
+        public static void WriteUnitTest(this IServiceCollection services,
+            IDictionary<string, string> selectedAssembly,
+            BaseUnitTestWriter baseUnitTestWriter = default)
+        {
+            EnumTest.CreateUnitTestFilesFromAssemblies(selectedAssembly, baseUnitTestWriter);
         }
     }
 }

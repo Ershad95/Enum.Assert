@@ -5,22 +5,22 @@ using System.Text;
 
 namespace TestCreator.Core
 {
-    public class BaseUnitTestWriter
+   public abstract class BaseUnitTestWriter
     {
         private AssertType _assertType = AssertType.Assert;
         private UnitTestFrameworkType _testFrameworkType = UnitTestFrameworkType.XUnit;
 
-        public void SetAssertType(AssertType assertType)
+        internal void SetAssertType(AssertType assertType)
         {
             _assertType = assertType;
         }
 
-        public void SetUnitTestFrameworkType(UnitTestFrameworkType unitTestFrameworkType)
+        internal void SetUnitTestFrameworkType(UnitTestFrameworkType unitTestFrameworkType)
         {
             _testFrameworkType = unitTestFrameworkType;
         }
         
-        public void CreateUnitTestFile(string path, IEnumerable<string> selectedAssembly)
+        internal void CreateUnitTestFile(string path, IEnumerable<string> selectedAssembly)
         {
             foreach (var @enum in GetEnumsFromAssemblies(selectedAssembly))
             {
