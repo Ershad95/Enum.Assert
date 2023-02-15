@@ -5,7 +5,7 @@ using System.Text;
 
 namespace TestCreator.Core
 {
-   public abstract class BaseUnitTestWriter
+    public abstract class BaseUnitTestWriter
     {
         private AssertType _assertType = AssertType.Assert;
         private UnitTestFrameworkType _testFrameworkType = UnitTestFrameworkType.XUnit;
@@ -19,7 +19,7 @@ namespace TestCreator.Core
         {
             _testFrameworkType = unitTestFrameworkType;
         }
-        
+
         internal void CreateUnitTestFile(string path, IEnumerable<string> selectedAssembly)
         {
             foreach (var @enum in GetEnumsFromAssemblies(selectedAssembly))
@@ -52,7 +52,7 @@ namespace TestCreator.Core
 
             fileContent.Append("\n}");
         }
-        
+
         protected virtual void WriteMethodTest(StringBuilder fileContent, string enumItem, long valueItem, MemberInfo @enum)
         {
             WriteMethodAttribute(fileContent);
@@ -168,6 +168,7 @@ namespace TestCreator.Core
 
             return allEnums;
         }
+
         private static string ConvertNumberToText(long valueItem)
         {
             var positive = Math.Abs(valueItem);

@@ -32,7 +32,7 @@
         public static void CreateUnitTestFilesFromAssemblies(
             string path, 
             string[] selectedAssembly,
-            BaseUnitTestWriter baseUnitTestWriter = default)
+            BaseUnitTestWriter baseUnitTestWriter)
         {
             if (string.IsNullOrEmpty(path))
                 throw new ArgumentException("path is null");
@@ -43,10 +43,6 @@
             if (!selectedAssembly.Any())
                 throw new ArgumentException("selectedAssemly not given");
             
-            if (baseUnitTestWriter is null or null)
-            {
-                baseUnitTestWriter = new DefaultUnitTestWriter();
-            }
             baseUnitTestWriter.CreateUnitTestFile(path, selectedAssembly);
         }
 
@@ -67,7 +63,7 @@
         }
         
         public static void CreateUnitTestFilesFromAssemblies(IDictionary<string, string> selectedAssembly,
-            BaseUnitTestWriter baseUnitTestWriter = default)
+            BaseUnitTestWriter baseUnitTestWriter)
         {
             foreach (var assembly in selectedAssembly)
             {
