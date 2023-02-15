@@ -6,39 +6,41 @@ using System.Text;
 
 namespace TestCreator.Core;
 
-public static class WriteUnitTestHelper
+public class WriteUnitTestHelper
 {
-    private static AssertType _assertType = AssertType.Assert;
-    private static UnitTestFrameworkType _testFrameworkType = UnitTestFrameworkType.XUnit;
-    
-    internal static void SetAssertType(AssertType assertType)
+    private AssertType _assertType = AssertType.Assert;
+    private UnitTestFrameworkType _testFrameworkType = UnitTestFrameworkType.XUnit;
+
+    internal void SetAssertType(AssertType assertType)
     {
         _assertType = assertType;
     }
-    
-    internal static void SetUnitTestFrameworkType(UnitTestFrameworkType unitTestFrameworkType)
+
+    internal void SetUnitTestFrameworkType(UnitTestFrameworkType unitTestFrameworkType)
     {
         _testFrameworkType = unitTestFrameworkType;
     }
-    internal static void CreateUnitTestFile(string path, IEnumerable<string> selectedAssembly)
+
+    internal void CreateUnitTestFile(string path, IEnumerable<string> selectedAssembly)
     {
         foreach (var @enum in GetEnumsFromAssemblies(selectedAssembly))
         {
             if (File.Exists(@$"{path}/{@enum.Name}.cs")) continue;
             var unitTestFileContent = CreateContentOfFile(@enum);
-            File.WriteAllText(@$"{path}/{@enum.Name}UnitTest.cs",unitTestFileContent );
+            File.WriteAllText(@$"{path}/{@enum.Name}UnitTest.cs", unitTestFileContent);
         }
     }
-    
-    private static string CreateContentOfFile(Type @enum)
+
+    private string CreateContentOfFile(Type @enum)
     {
         var fileContent = new StringBuilder();
-        WriteNamespace(fileContent,@enum);
-        WriteClassTest(fileContent,@enum);
+        WriteNamespace(fileContent, @enum);
+        WriteClassTest(fileContent, @enum);
         fileContent.Append("\n}");
         return fileContent.ToString();
     }
-    private static void WriteClassTest(StringBuilder fileContent,Type @enum)
+
+    protected virtual void WriteClassTest(StringBuilder fileContent, Type @enum)
     {
         WriteClassAttribute(fileContent);
         fileContent.Append($"public class {@enum.Name}UnitTest \n{{ \n");
@@ -46,27 +48,28 @@ public static class WriteUnitTestHelper
         {
             var titleItem = (string)Convert.ChangeType(item, typeof(string));
             var valueItem = (long)Convert.ChangeType(item, typeof(long));
-            WriteMethodTest(fileContent, titleItem, valueItem,@enum);
+            WriteMethodTest(fileContent, titleItem, valueItem, @enum);
         }
     }
-    private static void WriteMethodTest(StringBuilder fileContent,string titleItem,long valueItem,MemberInfo @enum)
+    protected virtual void WriteMethodTest(StringBuilder fileContent, string enumItem, long valueItem, MemberInfo @enum)
     {
         WriteMethodAttribute(fileContent);
-        fileContent.Append($"\tpublic void {@enum.Name}_Check{titleItem}Value_ValueEqualsTo{valueItem}()\n{{");
-        
+        fileContent.Append($"\tpublic void {@enum.Name}_Check{enumItem}Value_ValueEqualsTo{valueItem}()\n{{");
+
         var type = @enum.DeclaringType is null ? @enum.Name : $"{@enum.DeclaringType.Name}.{@enum.Name}";
         fileContent.Append(@$"
         // Arrange
-        const int {titleItem} = {valueItem};
-        const {type} {@enum.Name.ToLower()} = {type}.{titleItem};
+        const int {enumItem} = {valueItem};
+        const {type} {@enum.Name.ToLower()} = {type}.{enumItem};
         // Act 
-        const bool actual = {@enum.Name.ToLower()} == ({type}){titleItem};
+        const bool actual = {@enum.Name.ToLower()} == ({type}){enumItem};
         // Assert 
         {WriteAssertOperation()};");
         fileContent.Append('\n');
         fileContent.Append("\n}");
     }
-    private static string WriteAssertOperation()
+
+    private string WriteAssertOperation()
     {
         return _assertType switch
         {
@@ -76,7 +79,8 @@ public static class WriteUnitTestHelper
             _ => throw new InvalidEnumArgumentException()
         };
     }
-    private static void WriteMethodAttribute(StringBuilder fileContent)
+
+    private void WriteMethodAttribute(StringBuilder fileContent)
     {
         switch (_testFrameworkType)
         {
@@ -92,7 +96,8 @@ public static class WriteUnitTestHelper
                 throw new ConstraintException();
         }
     }
-    private static void WriteClassAttribute(StringBuilder fileContent)
+
+    private void WriteClassAttribute(StringBuilder fileContent)
     {
         switch (_testFrameworkType)
         {
@@ -109,18 +114,21 @@ public static class WriteUnitTestHelper
                 throw new ConstraintException();
         }
     }
-    private static void WriteNamespace(StringBuilder fileContent,Type @enum)
+
+    private void WriteNamespace(StringBuilder fileContent, Type @enum)
     {
         fileContent.Append($"namespace unitTest.{@enum.Name};\n");
-        WriteEnumNameSpace(fileContent,@enum);
+        WriteEnumNameSpace(fileContent, @enum);
         WriteAssertNameSpace(fileContent);
     }
-    private static void WriteEnumNameSpace(StringBuilder fileContent,Type @enum)
+
+    private void WriteEnumNameSpace(StringBuilder fileContent, Type @enum)
     {
         var enumNameSpace = @enum.FullName!.Replace($".{@enum.Name}", string.Empty);
         fileContent.Append($"using {enumNameSpace};\n");
     }
-    private static void WriteAssertNameSpace(StringBuilder fileContent)
+
+    private void WriteAssertNameSpace(StringBuilder fileContent)
     {
         switch (_assertType)
         {
@@ -135,15 +143,14 @@ public static class WriteUnitTestHelper
             default:
                 throw new ConstraintException();
         }
-     
-        
     }
-    private static IEnumerable<TypeInfo> GetEnumsFromAssemblies(IEnumerable<string> selectedAssembly)
+
+    private IEnumerable<TypeInfo> GetEnumsFromAssemblies(IEnumerable<string> selectedAssembly)
     {
         var allDependency = AppDomain.CurrentDomain.GetAssemblies();
         if (allDependency is null)
             throw new ArgumentException("EntryAssembly is null");
-        
+
         var assemblies = new List<Assembly>();
         foreach (var name in selectedAssembly)
         {
@@ -155,7 +162,7 @@ public static class WriteUnitTestHelper
         {
             allEnums.AddRange(assembly.DefinedTypes.Where(x => x.IsEnum));
         }
-        
+
         return allEnums;
     }
 }

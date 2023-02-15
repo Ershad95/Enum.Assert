@@ -20,7 +20,7 @@ namespace TestCreator.Core
             if (!selectedAssembly.Any())
                 throw new ArgumentException("selectedAssemly not given");
 
-            WriteUnitTestHelper.CreateUnitTestFile(path, selectedAssembly);
+            new WriteUnitTestHelper().CreateUnitTestFile(path, selectedAssembly);
         }
 
         /// <summary>
