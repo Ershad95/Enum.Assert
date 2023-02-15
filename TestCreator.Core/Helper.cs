@@ -33,9 +33,12 @@ public static class Helper
     
     private static void WriteNamespace(StringBuilder fileContent,Type @enum)
     {
-        var nameSpace = @enum.FullName!.Replace($".{@enum.Name}", string.Empty);
+        var enumNameSpace = @enum.FullName!.Replace($".{@enum.Name}", string.Empty);
+        var assertNameSpace = _assertType == AssertType.Shouldly ? "using Shouldly;":"using FluentAssertions;";
+        
         fileContent.Append($"namespace unitTest.{@enum.Name};\n");
-        fileContent.Append($"using {nameSpace};\n");
+        fileContent.Append($"using {enumNameSpace};\n");
+        fileContent.Append($"using {assertNameSpace};\n");
     }
     private static void WriteClassTest(StringBuilder fileContent,Type @enum)
     {
@@ -77,21 +80,22 @@ public static class Helper
     
     private static IEnumerable<TypeInfo> GetEnumsFromAssemblies(IEnumerable<string> selectedAssembly)
     {
-        var allAssembly = AppDomain.CurrentDomain.GetAssemblies();
-        if (allAssembly is null)
+        var allDependency = AppDomain.CurrentDomain.GetAssemblies();
+        if (allDependency is null)
             throw new ArgumentException("EntryAssembly is null");
-        var assemblyTarget = new List<Assembly>();
+        
+        var assemblies = new List<Assembly>();
         foreach (var name in selectedAssembly)
         {
-            assemblyTarget.AddRange(allAssembly.Where(x => x.FullName!.Contains(name)));
+            assemblies.AddRange(allDependency.Where(x => x.FullName!.Contains(name)));
         }
 
-        var typeInfos = new List<TypeInfo>();
-        foreach (var assembly in assemblyTarget)
+        var allEnums = new List<TypeInfo>();
+        foreach (var assembly in assemblies)
         {
-            typeInfos.AddRange(assembly.DefinedTypes.Where(x => x.IsEnum));
+            allEnums.AddRange(assembly.DefinedTypes.Where(x => x.IsEnum));
         }
 
-        return typeInfos;
+        return allEnums;
     }
 }
