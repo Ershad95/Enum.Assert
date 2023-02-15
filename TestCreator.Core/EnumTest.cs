@@ -10,7 +10,9 @@
         /// <param name="assertType">Select Assert Type</param>
         /// <param name="unitTestFrameworkType">Select unitTest Framework</param>
         /// <exception cref="ArgumentException">when Entry data is invalid</exception>
-        public static void CreateUnitTestFilesFromAssemblies(string path, string[] selectedAssembly,
+        public static void CreateUnitTestFilesFromAssemblies(
+            string path, 
+            string[] selectedAssembly,
             AssertType assertType,
             UnitTestFrameworkType unitTestFrameworkType)
         {
@@ -28,9 +30,16 @@
             baseUnitTestWriter.SetUnitTestFrameworkType(unitTestFrameworkType);
             baseUnitTestWriter.CreateUnitTestFile(path, selectedAssembly);
         }
-        
+
+        /// <summary>
+        /// Create Unit Test For Enums
+        /// </summary>
+        /// <param name="path"></param>
+        /// <param name="selectedAssembly">List Of Ass that you want Find Enums and Write Unit tests</param>
+        /// <param name="baseUnitTestWriter"></param>
+        /// <exception cref="ArgumentException"></exception>
         public static void CreateUnitTestFilesFromAssemblies(
-            string path, 
+            string path,
             string[] selectedAssembly,
             BaseUnitTestWriter baseUnitTestWriter)
         {
@@ -42,7 +51,7 @@
 
             if (!selectedAssembly.Any())
                 throw new ArgumentException("selectedAssemly not given");
-            
+
             baseUnitTestWriter.CreateUnitTestFile(path, selectedAssembly);
         }
 
@@ -52,7 +61,8 @@
         /// <param name="selectedAssembly">key : Assembly Name , Value : path of unitTest creation</param>
         /// <param name="assertType">Select Assert Type</param>
         /// <param name="unitTestFrameworkType">Select unitTest Framework</param>
-        public static void CreateUnitTestFilesFromAssemblies(IDictionary<string, string> selectedAssembly,
+        public static void CreateUnitTestFilesFromAssemblies(
+            IDictionary<string, string> selectedAssembly,
             AssertType assertType,
             UnitTestFrameworkType unitTestFrameworkType)
         {
@@ -61,8 +71,14 @@
                 CreateUnitTestFilesFromAssemblies(assembly.Value, new[] { assembly.Key }, assertType, unitTestFrameworkType);
             }
         }
-        
-        public static void CreateUnitTestFilesFromAssemblies(IDictionary<string, string> selectedAssembly,
+
+        /// <summary>
+        /// Create Unit Test For Enums
+        /// </summary>
+        /// <param name="selectedAssembly">key : Assembly Name , Value : path of unitTest creation</param>
+        /// <param name="baseUnitTestWriter"></param>
+        public static void CreateUnitTestFilesFromAssemblies(
+            IDictionary<string, string> selectedAssembly,
             BaseUnitTestWriter baseUnitTestWriter)
         {
             foreach (var assembly in selectedAssembly)

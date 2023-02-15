@@ -65,7 +65,10 @@ namespace TestCreator.Core
         /// <param name="enumItem"></param>
         /// <param name="valueItem"></param>
         /// <param name="enum"></param>
-        protected virtual void WriteMethodTest(StringBuilder fileContent, string enumItem, long valueItem, MemberInfo @enum)
+        protected virtual void WriteMethodTest(StringBuilder fileContent, 
+            string enumItem, 
+            long valueItem, 
+            MemberInfo @enum)
         {
             WriteMethodAttribute(fileContent);
             var convertNumberToText = ConvertNumberToText(valueItem);
