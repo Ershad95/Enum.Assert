@@ -16,8 +16,8 @@ namespace TestCreator.Core
         public static void WriteUnitTest(this IServiceCollection services,
             string path,
             string[] selectedAssembly,
-            AssertType assertType = AssertType.Assert,
-            UnitTestFrameworkType unitTestFrameworkType = UnitTestFrameworkType.XUnit)
+            AssertType assertType,
+            UnitTestFrameworkType unitTestFrameworkType)
         {
             EnumTest.CreateUnitTestFilesFromAssemblies(path, selectedAssembly, assertType, unitTestFrameworkType);
         }
@@ -31,8 +31,8 @@ namespace TestCreator.Core
         /// <param name="unitTestFrameworkType"></param>
         public static void WriteUnitTest(this IServiceCollection services,
             IDictionary<string, string> selectedAssembly,
-            AssertType assertType = AssertType.Assert,
-            UnitTestFrameworkType unitTestFrameworkType = UnitTestFrameworkType.XUnit)
+            AssertType assertType,
+            UnitTestFrameworkType unitTestFrameworkType)
         {
             EnumTest.CreateUnitTestFilesFromAssemblies(selectedAssembly, assertType, unitTestFrameworkType);
         }

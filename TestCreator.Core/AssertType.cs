@@ -1,6 +1,6 @@
 ﻿namespace TestCreator.Core
 {
-    public enum AssertType : byte
+    public enum AssertType
     {
         Assert = 1,
         Shouldly=2,
