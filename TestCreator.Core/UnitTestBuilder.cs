@@ -1,16 +1,24 @@
 ﻿using System.ComponentModel;
+using System.Data;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace TestCreator.Core;
 
-public static class Helper
+public static class UnitTestBuilder
 {
     private static AssertType _assertType = AssertType.Assert;
+    private static UnitTestFrameworkType _testFrameworkType = UnitTestFrameworkType.XUnit;
     
     internal static void SetAssertType(AssertType assertType)
     {
         _assertType = assertType;
+    }
+    
+    internal static void SetUnitTestFrameworkType(UnitTestFrameworkType unitTestFrameworkType)
+    {
+        _testFrameworkType = unitTestFrameworkType;
     }
     internal static void CreateUnitTestFile(string path, IEnumerable<string> selectedAssembly)
     {
@@ -21,7 +29,6 @@ public static class Helper
             File.WriteAllText(@$"{path}/{@enum.Name}UnitTest.cs",unitTestFileContent );
         }
     }
-    
     private static string CreateContentOfFile(Type @enum)
     {
         var fileContent = new StringBuilder();
@@ -31,17 +38,10 @@ public static class Helper
         return fileContent.ToString();
     }
     
-    private static void WriteNamespace(StringBuilder fileContent,Type @enum)
-    {
-        var enumNameSpace = @enum.FullName!.Replace($".{@enum.Name}", string.Empty);
-        var assertNameSpace = _assertType == AssertType.Shouldly ? "using Shouldly;":"using FluentAssertions;";
-        
-        fileContent.Append($"namespace unitTest.{@enum.Name};\n");
-        fileContent.Append($"using {enumNameSpace};\n");
-        fileContent.Append($"using {assertNameSpace};\n");
-    }
+   
     private static void WriteClassTest(StringBuilder fileContent,Type @enum)
     {
+        WriteClassAttribute(fileContent);
         fileContent.Append($"public class {@enum.Name}UnitTest \n{{ \n");
         foreach (var item in @enum.GetEnumValues())
         {
@@ -52,10 +52,10 @@ public static class Helper
     }
     private static void WriteMethodTest(StringBuilder fileContent,string titleItem,long valueItem,MemberInfo @enum)
     {
-        fileContent.Append("\n\t[Fact]\n");
+        WriteMethodAttribute(fileContent);
         fileContent.Append($"\tpublic void {@enum.Name}_Check{titleItem}Value_ValueEqualsTo{valueItem}()\n{{");
-        var type = @enum.DeclaringType is null ? @enum.Name : $"{@enum.DeclaringType.Name}.{@enum.Name}";
         
+        var type = @enum.DeclaringType is null ? @enum.Name : $"{@enum.DeclaringType.Name}.{@enum.Name}";
         fileContent.Append(@$"
         // Arrange
         const int {titleItem} = {valueItem};
@@ -63,11 +63,11 @@ public static class Helper
         // Act 
         const bool actual = {@enum.Name.ToLower()} == ({type}){titleItem};
         // Assert 
-        {WriteAssert()};");
+        {WriteAssertOperation()};");
         fileContent.Append('\n');
         fileContent.Append("\n}");
     }
-    private static string WriteAssert()
+    private static string WriteAssertOperation()
     {
         return _assertType switch
         {
@@ -76,6 +76,70 @@ public static class Helper
             AssertType.FluentAssertions => "actual.Should().Be(true)",
             _ => throw new InvalidEnumArgumentException()
         };
+    }
+
+
+    private static void WriteMethodAttribute(StringBuilder fileContent)
+    {
+        switch (_testFrameworkType)
+        {
+            case UnitTestFrameworkType.XUnit:
+                break;
+            case UnitTestFrameworkType.NUnit:
+                fileContent.Append("\n\t[TestFixture]\n");
+                break;
+            case UnitTestFrameworkType.MsUnit:
+                fileContent.Append("\n\t[TestClass]\n");
+                break;
+            default:
+                throw new ConstraintException();
+        }
+    }
+    private static void WriteClassAttribute(StringBuilder fileContent)
+    {
+        switch (_testFrameworkType)
+        {
+            case UnitTestFrameworkType.XUnit:
+                fileContent.Append("\n\t[Fact]\n");
+                break;
+            case UnitTestFrameworkType.NUnit:
+                fileContent.Append("\n\t[Test]\n");
+                break;
+            case UnitTestFrameworkType.MsUnit:
+                fileContent.Append("\n\t[TestMethod]\n");
+                break;
+            default:
+                throw new ConstraintException();
+        }
+    }
+    private static void WriteNamespace(StringBuilder fileContent,Type @enum)
+    {
+        fileContent.Append($"namespace unitTest.{@enum.Name};\n");
+        WriteEnumNameSpace(fileContent,@enum);
+        WriteAssertNameSpace(fileContent);
+    }
+    private static void WriteEnumNameSpace(StringBuilder fileContent,Type @enum)
+    {
+        var enumNameSpace = @enum.FullName!.Replace($".{@enum.Name}", string.Empty);
+        fileContent.Append($"using {enumNameSpace};\n");
+    }
+    private static void WriteAssertNameSpace(StringBuilder fileContent)
+    {
+        switch (_assertType)
+        {
+            case AssertType.Assert:
+                break;
+            case AssertType.Shouldly:
+                fileContent.Append("using using Shouldly;\n");
+                break;
+            case AssertType.FluentAssertions:
+                fileContent.Append("using FluentAssertions;\n");
+                break;
+            default:
+                throw new ConstraintException();
+        }
+     
+        
     }
     
     private static IEnumerable<TypeInfo> GetEnumsFromAssemblies(IEnumerable<string> selectedAssembly)
