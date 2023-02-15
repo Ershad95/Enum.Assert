@@ -1,6 +1,3 @@
-﻿using System.Reflection;
-using System.Text;
-
-namespace TestCreator.Core;
+﻿namespace TestCreator.Core;
 
 internal class DefaultUnitTestWriter : BaseUnitTestWriter { }
