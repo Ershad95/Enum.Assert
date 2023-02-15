@@ -1,12 +1,11 @@
 ﻿using System.ComponentModel;
 using System.Data;
 using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace TestCreator.Core;
 
-public class WriteUnitTestHelper
+public class BaseUnitTestWriter
 {
     private AssertType _assertType = AssertType.Assert;
     private UnitTestFrameworkType _testFrameworkType = UnitTestFrameworkType.XUnit;
