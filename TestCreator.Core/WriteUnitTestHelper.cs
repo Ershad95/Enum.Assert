@@ -29,6 +29,7 @@ public static class WriteUnitTestHelper
             File.WriteAllText(@$"{path}/{@enum.Name}UnitTest.cs",unitTestFileContent );
         }
     }
+    
     private static string CreateContentOfFile(Type @enum)
     {
         var fileContent = new StringBuilder();
@@ -37,8 +38,6 @@ public static class WriteUnitTestHelper
         fileContent.Append("\n}");
         return fileContent.ToString();
     }
-    
-   
     private static void WriteClassTest(StringBuilder fileContent,Type @enum)
     {
         WriteClassAttribute(fileContent);
@@ -77,8 +76,6 @@ public static class WriteUnitTestHelper
             _ => throw new InvalidEnumArgumentException()
         };
     }
-
-
     private static void WriteMethodAttribute(StringBuilder fileContent)
     {
         switch (_testFrameworkType)
@@ -141,7 +138,6 @@ public static class WriteUnitTestHelper
      
         
     }
-    
     private static IEnumerable<TypeInfo> GetEnumsFromAssemblies(IEnumerable<string> selectedAssembly)
     {
         var allDependency = AppDomain.CurrentDomain.GetAssemblies();
@@ -159,7 +155,7 @@ public static class WriteUnitTestHelper
         {
             allEnums.AddRange(assembly.DefinedTypes.Where(x => x.IsEnum));
         }
-
+        
         return allEnums;
     }
 }
