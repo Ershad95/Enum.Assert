@@ -6,7 +6,7 @@ using System.Text;
 
 namespace TestCreator.Core;
 
-public static class UnitTestBuilder
+public static class WriteUnitTestHelper
 {
     private static AssertType _assertType = AssertType.Assert;
     private static UnitTestFrameworkType _testFrameworkType = UnitTestFrameworkType.XUnit;
