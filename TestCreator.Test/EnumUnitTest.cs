@@ -14,7 +14,7 @@ namespace TestCreator.Test
             // Act
             void Action()
             {
-                EnumTest.WriteUnitTest(path, new string[] { "" });
+                EnumTest.CreateUnitTestFilesFromAssemblies(path, new string[] { "" });
             }
 
             // Assert 
@@ -26,7 +26,7 @@ namespace TestCreator.Test
             // Arrange
             var path = string.Empty;
             // Act
-            void Action() => EnumTest.WriteUnitTest(path, new[] { "" });
+            void Action() => EnumTest.CreateUnitTestFilesFromAssemblies(path, new[] { "" });
 
             // Assert 
             Assert.Throws<ArgumentException>((Action)Action);
@@ -40,7 +40,7 @@ namespace TestCreator.Test
             // Act
             void Action()
             {
-                EnumTest.WriteUnitTest(path, new[] { "" });
+                EnumTest.CreateUnitTestFilesFromAssemblies(path, new[] { "" });
             }
 
             // Assert 
@@ -55,7 +55,7 @@ namespace TestCreator.Test
             // Act
             void Action()
             {
-                EnumTest.WriteUnitTest(path, Array.Empty<string>());
+                EnumTest.CreateUnitTestFilesFromAssemblies(path, Array.Empty<string>());
             }
 
             // Assert 

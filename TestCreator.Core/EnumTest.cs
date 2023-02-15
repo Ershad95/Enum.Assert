@@ -10,7 +10,7 @@ namespace TestCreator.Core
         /// <param name="path">path of unitTest creation</param>
         /// <param name="selectedAssembly">List Of Ass that you want Find Enums and Write Unit tests</param>
         /// <exception cref="ArgumentException">when Entry data is invalid</exception>
-        public static void WriteUnitTest(string path, string[] selectedAssembly)
+        public static void CreateUnitTestFilesFromAssemblies(string path, string[] selectedAssembly)
         {
             if (string.IsNullOrEmpty(path))
                 throw new ArgumentException("path is null");
@@ -28,11 +28,11 @@ namespace TestCreator.Core
         /// Create Unit Test For Enums
         /// </summary>
         /// <param name="selectedAssembly">key : Assembly Name , Value : path of unitTest creation</param>
-        public static void WriteUnitTest(IDictionary<string, string> selectedAssembly)
+        public static void CreateUnitTestFilesFromAssemblies(IDictionary<string, string> selectedAssembly)
         {
             foreach (var assembly in selectedAssembly)
             {
-                WriteUnitTest(assembly.Value, new[] { assembly.Key });
+                CreateUnitTestFilesFromAssemblies(assembly.Value, new[] { assembly.Key });
             }
         }
     }
@@ -48,7 +48,7 @@ namespace TestCreator.Core
         /// <exception cref="ArgumentException">when Entry data is invalid</exception>
         public static void WriteUnitTest(this IServiceCollection services, string path, string[] selectedAssembly)
         {
-            EnumTest.WriteUnitTest(path, selectedAssembly);
+            EnumTest.CreateUnitTestFilesFromAssemblies(path, selectedAssembly);
         }
 
         /// <summary>
@@ -58,7 +58,7 @@ namespace TestCreator.Core
         /// <param name="selectedAssembly">key : Assembly Name , Value : path of unitTest creation</param>
         public static void WriteUnitTest(this IServiceCollection services, IDictionary<string, string> selectedAssembly)
         {
-            EnumTest.WriteUnitTest(selectedAssembly);
+            EnumTest.CreateUnitTestFilesFromAssemblies(selectedAssembly);
         }
     }
 }
