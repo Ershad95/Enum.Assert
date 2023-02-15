@@ -10,16 +10,16 @@ namespace TestCreator.Core
         private AssertType _assertType = AssertType.Assert;
         private UnitTestFrameworkType _testFrameworkType = UnitTestFrameworkType.XUnit;
 
-        internal void SetAssertType(AssertType assertType)
+        public void SetAssertType(AssertType assertType)
         {
             _assertType = assertType;
         }
 
-        internal void SetUnitTestFrameworkType(UnitTestFrameworkType unitTestFrameworkType)
+        public void SetUnitTestFrameworkType(UnitTestFrameworkType unitTestFrameworkType)
         {
             _testFrameworkType = unitTestFrameworkType;
         }
-
+        
         public void CreateUnitTestFile(string path, IEnumerable<string> selectedAssembly)
         {
             foreach (var @enum in GetEnumsFromAssemblies(selectedAssembly))
