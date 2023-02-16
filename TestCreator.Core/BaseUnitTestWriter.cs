@@ -141,8 +141,7 @@ namespace TestCreator.Core
 
         private static void WriteEnumNameSpace(StringBuilder fileContent, Type @enum)
         {
-            var enumNameSpace = @enum.FullName!.Replace($".{@enum.Name}", string.Empty);
-            fileContent.Append($"using {enumNameSpace};\n");
+            fileContent.Append($"using {@enum.Namespace};\n");
         }
 
         private void WriteAssertNameSpace(StringBuilder fileContent)
@@ -178,7 +177,7 @@ namespace TestCreator.Core
             var allEnums = new List<TypeInfo>();
             foreach (var assembly in assemblies)
             {
-                allEnums.AddRange(assembly.DefinedTypes.Where(x => x.IsEnum));
+                allEnums.AddRange(assembly.DefinedTypes.Where(x => x.IsEnum && x.IsVisible));
             }
 
             return allEnums;
