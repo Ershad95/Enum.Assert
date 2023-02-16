@@ -47,7 +47,7 @@ namespace TestCreator.Core
         protected virtual void WriteClassTest(StringBuilder fileContent, Type @enum)
         {
             WriteClassAttribute(fileContent);
-            fileContent.Append($"public class {@enum.Name}UnitTest \n{{ \n");
+            fileContent.Append($"\n    public class {@enum.Name}UnitTest \n    {{\n");
             foreach (var item in @enum.GetEnumValues())
             {
                 var titleItem = (string)Convert.ChangeType(item, typeof(string));
@@ -55,7 +55,7 @@ namespace TestCreator.Core
                 WriteMethodTest(fileContent, titleItem, valueItem, @enum);
             }
 
-            fileContent.Append("\n}");
+            fileContent.Append(" \n    }");
         }
 
         /// <summary>
@@ -65,26 +65,28 @@ namespace TestCreator.Core
         /// <param name="enumItem"></param>
         /// <param name="valueItem"></param>
         /// <param name="enum"></param>
-        protected virtual void WriteMethodTest(StringBuilder fileContent, 
-            string enumItem, 
-            long valueItem, 
+        protected virtual void WriteMethodTest(StringBuilder fileContent,
+            string enumItem,
+            long valueItem,
             MemberInfo @enum)
         {
             WriteMethodAttribute(fileContent);
             var convertNumberToText = ConvertNumberToText(valueItem);
-            fileContent.Append($"public void {@enum.Name}_Check{enumItem}Value_ValueEqualsTo{convertNumberToText}()\n{{");
-
             var type = @enum.DeclaringType is null ? @enum.Name : $"{@enum.DeclaringType.Name}.{@enum.Name}";
-            fileContent.Append(@$"
-        // Arrange
-        const int {enumItem.ToLower()} = {valueItem};
-        const {type} {@enum.Name.ToLower()} = {type}.{enumItem};
-        // Act 
-        const bool actual = {@enum.Name.ToLower()} == ({type}){enumItem.ToLower()};
-        // Assert 
-        {WriteAssertOperation()};");
+            fileContent.Append($"        public void " +
+               $"{@enum.Name}_Check{enumItem}Value_ValueEqualsTo{convertNumberToText}()" +
+               $"\n        {{\n");
+            fileContent.Append(
+                $"            // Arrange\n " +
+                $"           const int {enumItem.ToLower()} = {valueItem};\n" +
+                $"            const {type} {@enum.Name.ToLower()} = {type}.{enumItem};\n" +
+                $"            // Act\n " +
+                $"           const bool actual = {@enum.Name.ToLower()} == ({type}){enumItem.ToLower()};\n" +
+                $"            // Assert \n" +
+                $"            {WriteAssertOperation()};");
+
+            fileContent.Append("\n        }");
             fileContent.Append('\n');
-            fileContent.Append("\n}");
         }
 
         private string WriteAssertOperation()
@@ -103,12 +105,13 @@ namespace TestCreator.Core
             switch (_testFrameworkType)
             {
                 case UnitTestFrameworkType.XUnit:
+                    fileContent.Append("\n        [Fact]\n");
                     break;
                 case UnitTestFrameworkType.NUnit:
-                    fileContent.Append("\n\t[TestFixture]\n");
+                    fileContent.Append("\n        [TestFixture]\n");
                     break;
                 case UnitTestFrameworkType.MsUnit:
-                    fileContent.Append("\n\t[TestClass]\n");
+                    fileContent.Append("\n        [TestClass]\n");
                     break;
                 default:
                     throw new ConstraintException();
