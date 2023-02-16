@@ -76,12 +76,17 @@ namespace TestCreator.Core
             fileContent.Append($"        public void " +
                $"{@enum.Name}_Check{enumItem}Value_ValueEqualsTo{convertNumberToText}()" +
                $"\n        {{\n");
+
+            var parts = type.Split(".");
+            var enumVariableName = parts[parts.Length - 1];
+            var firstCharacter = enumVariableName.First().ToString().ToLower();
+            enumVariableName = $"{firstCharacter}{enumVariableName[1..enumVariableName.Length]}";
             fileContent.Append(
                 $"            // Arrange\n " +
                 $"           const int {enumItem.ToLower()} = {valueItem};\n" +
-                $"            const {type} {@enum.Name.ToLower()} = {type}.{enumItem};\n" +
+                $"            const {type} {enumVariableName} = {type}.{enumItem};\n" +
                 $"            // Act\n " +
-                $"           const bool actual = {@enum.Name.ToLower()} == ({type}){enumItem.ToLower()};\n" +
+                $"           const bool actual = {enumVariableName} == ({type}){enumItem.ToLower()};\n" +
                 $"            // Assert \n" +
                 $"            {WriteAssertOperation()};");
 
@@ -137,6 +142,7 @@ namespace TestCreator.Core
 
         protected virtual void WriteNamespace(StringBuilder fileContent, Type @enum)
         {
+            WriteTestFrameWorkNameSpace(fileContent);
             WriteEnumNameSpace(fileContent, @enum);
             WriteAssertNameSpace(fileContent);
             fileContent.Append($"namespace unitTest_{@enum.Name}\n{{");
@@ -164,7 +170,21 @@ namespace TestCreator.Core
                     throw new ConstraintException();
             }
         }
-
+        private void WriteTestFrameWorkNameSpace(StringBuilder fileContent)
+        {
+            switch (_testFrameworkType)
+            {
+                case UnitTestFrameworkType.XUnit:
+                    fileContent.Append("using Xunit;\n");
+                    break;
+                case UnitTestFrameworkType.NUnit:
+                    break;
+                case UnitTestFrameworkType.MsUnit:
+                    break;
+                default:
+                    throw new ConstraintException();
+            }
+        }
         private static IEnumerable<TypeInfo> GetEnumsFromAssemblies(IEnumerable<string> selectedAssembly)
         {
             var allDependency = AppDomain.CurrentDomain.GetAssemblies();
