@@ -17,9 +17,13 @@ namespace TestCreator.Core
             string path,
             string[] selectedAssembly,
             AssertType assertType,
-            UnitTestFrameworkType unitTestFrameworkType)
+            UnitTestFrameworkType unitTestFrameworkType,
+            bool overWriteTests = false)
         {
-            TestWriter.CreateUnitTestFilesFromAssemblies(path, selectedAssembly, assertType, unitTestFrameworkType);
+            TestWriter.CreateUnitTestFilesFromAssemblies(path,
+                selectedAssembly, assertType,
+                unitTestFrameworkType,
+                overWriteTests);
         }
 
         /// <summary>
@@ -32,9 +36,14 @@ namespace TestCreator.Core
         public static void WriteUnitTest(this IServiceCollection services,
             IDictionary<string, string> selectedAssembly,
             AssertType assertType,
-            UnitTestFrameworkType unitTestFrameworkType)
+            UnitTestFrameworkType unitTestFrameworkType,
+            bool overWriteTests = false)
         {
-            TestWriter.CreateUnitTestFilesFromAssemblies(selectedAssembly, assertType, unitTestFrameworkType);
+            TestWriter.CreateUnitTestFilesFromAssemblies(
+                selectedAssembly,
+                assertType,
+                unitTestFrameworkType,
+                overWriteTests);
         }
 
 
@@ -49,9 +58,14 @@ namespace TestCreator.Core
         public static void WriteUnitTest(this IServiceCollection services,
             string path,
             string[] selectedAssembly,
-            BaseUnitTestWriter baseUnitTestWriter)
+            BaseUnitTestWriter baseUnitTestWriter,
+            bool overWriteTests = false)
         {
-            TestWriter.CreateUnitTestFilesFromAssemblies(path, selectedAssembly, baseUnitTestWriter);
+            TestWriter.CreateUnitTestFilesFromAssemblies(
+                path,
+                selectedAssembly,
+                baseUnitTestWriter,
+                overWriteTests);
         }
 
         /// <summary>
@@ -62,9 +76,13 @@ namespace TestCreator.Core
         /// <param name="baseUnitTestWriter"></param>
         public static void WriteUnitTest(this IServiceCollection services,
             IDictionary<string, string> selectedAssembly,
-            BaseUnitTestWriter baseUnitTestWriter)
+            BaseUnitTestWriter baseUnitTestWriter,
+            bool overWriteTests = false)
         {
-            TestWriter.CreateUnitTestFilesFromAssemblies(selectedAssembly, baseUnitTestWriter);
+            TestWriter.CreateUnitTestFilesFromAssemblies(
+                selectedAssembly,
+                baseUnitTestWriter,
+                overWriteTests);
         }
     }
 }
