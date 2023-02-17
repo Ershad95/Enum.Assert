@@ -6,9 +6,29 @@ Automatic Create Enum unit test with Refelection and XUnit in .net core/C# , Cre
 ### Overview
 ##### overLoad Of client api : 
 
-<pre>static void WriteUnitTest(string path, string[] selectedAssembly)</pre>
+<pre>static void CreateUnitTestFilesFromAssemblies(
+            string path,
+            string[] selectedAssembly,
+            AssertType assertType = AssertType.Assert,
+            UnitTestFrameworkType unitTestFrameworkType = UnitTestFrameworkType.XUnit,
+            bool overWriteTests = false)</pre>
 
-<pre>static void WriteUnitTest(IDictionary<string, string> selectedAssembly)</pre>
+<pre>static void CreateUnitTestFilesFromAssemblies(
+            string path,
+            string[] selectedAssembly,
+            BaseUnitTestWriter baseUnitTestWriter,
+            bool overWriteTests = false)</pre>
+            
+<pre>static void CreateUnitTestFilesFromAssemblies(
+            IDictionary<string, string> selectedAssembly,
+            AssertType assertType = AssertType.Assert,
+            UnitTestFrameworkType unitTestFrameworkType = UnitTestFrameworkType.XUnit,
+            bool overWriteTests = false))</pre>
+            
+<pre>static void CreateUnitTestFilesFromAssemblies(
+            IDictionary<string, string> selectedAssembly,
+            BaseUnitTestWriter baseUnitTestWriter,
+            bool overWriteTests = false)</pre>
 
 ##### overLoad Of Extensions IServiceCollection: 
 
