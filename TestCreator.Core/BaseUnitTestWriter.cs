@@ -68,15 +68,22 @@ namespace TestCreator.Core
             var enums = @enum.GetEnumValues();
             if (enums.Length > 0)
             {
-                string titleItem="";
-                long valueItem = 0;
+                string titleItem = "";
+                long minValue = long.MaxValue;
+                long maxValue = long.MinValue;
+
                 foreach (var item in enums)
                 {
                     titleItem = (string)Convert.ChangeType(item, typeof(string));
-                    valueItem = (long)Convert.ChangeType(item, typeof(long));
+                    var valueItem = (long)Convert.ChangeType(item, typeof(long));
                     WriteMethodTest(fileContent, titleItem, valueItem, @enum);
+
+                    if (minValue > valueItem) minValue = valueItem;
+                    if (maxValue < valueItem) maxValue = valueItem;
                 }
-                WriteBorderMethodTest(fileContent, titleItem, valueItem+1, @enum);
+                WriteBorderMethodTest(fileContent, titleItem, ++maxValue, @enum);
+                WriteBorderMethodTest(fileContent, titleItem, --minValue, @enum);
+
                 fileContent.Append(" \n    }");
             }
         }
