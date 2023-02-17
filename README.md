@@ -1,7 +1,7 @@
 # Enum.Assert  
 
 ## Project Description
-Automatic Create Enum unit test with Refelection and XUnit in .net core/C# , Creative Code With ErshadRaoufi
+Automatic Create unit test and save it in .cs files by find Enums with Refelection and XUnit in .net core/C# , Creative Code With ErshadRaoufi
 
 ### Overview
 ##### overLoad Of client api : 
