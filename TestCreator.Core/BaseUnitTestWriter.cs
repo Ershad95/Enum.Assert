@@ -9,34 +9,51 @@ namespace TestCreator.Core
     {
         private AssertType _assertType = AssertType.Assert;
         private UnitTestFrameworkType _testFrameworkType = UnitTestFrameworkType.XUnit;
+        private IEnumerable<string> _selectedAssembly;
+        private string _path = string.Empty;
+        private bool _overWriteTests;
 
-        internal void SetAssertType(AssertType assertType)
+        internal BaseUnitTestWriter SetTestAssertType(AssertType assertType)
         {
             _assertType = assertType;
+            return this;
         }
-
-        internal void SetUnitTestFrameworkType(UnitTestFrameworkType unitTestFrameworkType)
+        internal BaseUnitTestWriter SetTestFrameworkType(UnitTestFrameworkType unitTestFrameworkType)
         {
             _testFrameworkType = unitTestFrameworkType;
+            return this;
         }
-
-        internal void CreateUnitTestFile(string path, IEnumerable<string> selectedAssembly)
+        internal BaseUnitTestWriter SetCreationPath(string path)
         {
-            foreach (var @enum in GetEnumsFromAssemblies(selectedAssembly))
+            _path = path;
+            return this;
+        }
+        internal BaseUnitTestWriter SetAssemblies(IEnumerable<string> selectedAssembly)
+        {
+            _selectedAssembly = selectedAssembly;
+            return this;
+        }
+        internal BaseUnitTestWriter OverwriteTests(bool overWriteTests)
+        {
+            _overWriteTests = overWriteTests;
+            return this;
+        }
+        internal (bool status, Exception exception) Write()
+        {
+            try
             {
-                if (File.Exists(@$"{path}/{@enum.Name}.cs")) continue;
-                var unitTestFileContent = CreateContentOfFile(@enum);
-                File.WriteAllText(@$"{path}/{@enum.Name}UnitTest.cs", unitTestFileContent);
+                foreach (var @enum in GetEnumsFromAssemblies(_selectedAssembly))
+                {
+                    if (!_overWriteTests && File.Exists(@$"{_path}/{@enum.Name}.cs")) continue;
+                    var unitTestFileContent = CreateContentOfFile(@enum);
+                    File.WriteAllText(@$"{_path}/{@enum.Name}UnitTest.cs", unitTestFileContent);
+                }
+                return (true, null);
             }
-        }
-
-        private string CreateContentOfFile(Type @enum)
-        {
-            var fileContent = new StringBuilder();
-            WriteNamespace(fileContent, @enum);
-            WriteClassTest(fileContent, @enum);
-            fileContent.Append("\n}");
-            return fileContent.ToString();
+            catch (Exception exception)
+            {
+                return (false, exception);
+            }
         }
 
         /// <summary>
@@ -57,7 +74,6 @@ namespace TestCreator.Core
 
             fileContent.Append(" \n    }");
         }
-
         /// <summary>
         /// you can customize all of the test methods
         /// </summary>
@@ -93,7 +109,18 @@ namespace TestCreator.Core
             fileContent.Append("\n        }");
             fileContent.Append('\n');
         }
+        protected virtual void WriteNamespace(StringBuilder fileContent, Type @enum)
+        {
+            WriteTestFrameWorkNameSpace(fileContent);
+            WriteEnumNameSpace(fileContent, @enum);
+            WriteAssertNameSpace(fileContent);
+            fileContent.Append($"namespace unitTest_{@enum.Name}\n{{");
+        }
 
+        private static void WriteEnumNameSpace(StringBuilder fileContent, Type @enum)
+        {
+            fileContent.Append($"using {@enum.Namespace};\n");
+        }
         private string WriteAssertOperation()
         {
             return _assertType switch
@@ -104,7 +131,6 @@ namespace TestCreator.Core
                 _ => throw new InvalidEnumArgumentException()
             };
         }
-
         private void WriteMethodAttribute(StringBuilder fileContent)
         {
             switch (_testFrameworkType)
@@ -122,7 +148,6 @@ namespace TestCreator.Core
                     throw new ConstraintException();
             }
         }
-
         private void WriteClassAttribute(StringBuilder fileContent)
         {
             switch (_testFrameworkType)
@@ -139,20 +164,6 @@ namespace TestCreator.Core
                     throw new ConstraintException();
             }
         }
-
-        protected virtual void WriteNamespace(StringBuilder fileContent, Type @enum)
-        {
-            WriteTestFrameWorkNameSpace(fileContent);
-            WriteEnumNameSpace(fileContent, @enum);
-            WriteAssertNameSpace(fileContent);
-            fileContent.Append($"namespace unitTest_{@enum.Name}\n{{");
-        }
-
-        private static void WriteEnumNameSpace(StringBuilder fileContent, Type @enum)
-        {
-            fileContent.Append($"using {@enum.Namespace};\n");
-        }
-
         private void WriteAssertNameSpace(StringBuilder fileContent)
         {
             switch (_assertType)
@@ -205,7 +216,6 @@ namespace TestCreator.Core
 
             return allEnums;
         }
-
         private static string ConvertNumberToText(long valueItem)
         {
             var positiveValue = Math.Abs(valueItem);
@@ -227,6 +237,14 @@ namespace TestCreator.Core
             if (valueItem < 0)
                 result = $"Negative{result}";
             return result;
+        }
+        private string CreateContentOfFile(Type @enum)
+        {
+            var fileContent = new StringBuilder();
+            WriteNamespace(fileContent, @enum);
+            WriteClassTest(fileContent, @enum);
+            fileContent.Append("\n}");
+            return fileContent.ToString();
         }
     }
 }

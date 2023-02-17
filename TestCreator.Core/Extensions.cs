@@ -19,7 +19,7 @@ namespace TestCreator.Core
             AssertType assertType,
             UnitTestFrameworkType unitTestFrameworkType)
         {
-            EnumTest.CreateUnitTestFilesFromAssemblies(path, selectedAssembly, assertType, unitTestFrameworkType);
+            TestWriter.CreateUnitTestFilesFromAssemblies(path, selectedAssembly, assertType, unitTestFrameworkType);
         }
 
         /// <summary>
@@ -34,7 +34,7 @@ namespace TestCreator.Core
             AssertType assertType,
             UnitTestFrameworkType unitTestFrameworkType)
         {
-            EnumTest.CreateUnitTestFilesFromAssemblies(selectedAssembly, assertType, unitTestFrameworkType);
+            TestWriter.CreateUnitTestFilesFromAssemblies(selectedAssembly, assertType, unitTestFrameworkType);
         }
 
 
@@ -51,7 +51,7 @@ namespace TestCreator.Core
             string[] selectedAssembly,
             BaseUnitTestWriter baseUnitTestWriter)
         {
-            EnumTest.CreateUnitTestFilesFromAssemblies(path, selectedAssembly, baseUnitTestWriter);
+            TestWriter.CreateUnitTestFilesFromAssemblies(path, selectedAssembly, baseUnitTestWriter);
         }
 
         /// <summary>
@@ -64,7 +64,7 @@ namespace TestCreator.Core
             IDictionary<string, string> selectedAssembly,
             BaseUnitTestWriter baseUnitTestWriter)
         {
-            EnumTest.CreateUnitTestFilesFromAssemblies(selectedAssembly, baseUnitTestWriter);
+            TestWriter.CreateUnitTestFilesFromAssemblies(selectedAssembly, baseUnitTestWriter);
         }
     }
 }

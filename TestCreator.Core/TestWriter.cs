@@ -1,6 +1,9 @@
 ﻿namespace TestCreator.Core
 {
-    public static class EnumTest
+    /// <summary>
+    /// use this class for Call Public Api of Test creator or use public Extension Api
+    /// </summary>
+    public static class TestWriter
     {
         /// <summary>
         /// Create Unit Test For Enums
@@ -11,10 +14,11 @@
         /// <param name="unitTestFrameworkType">Select unitTest Framework</param>
         /// <exception cref="ArgumentException">when Entry data is invalid</exception>
         public static void CreateUnitTestFilesFromAssemblies(
-            string path, 
+            string path,
             string[] selectedAssembly,
-            AssertType assertType,
-            UnitTestFrameworkType unitTestFrameworkType)
+            AssertType assertType = AssertType.Assert,
+            UnitTestFrameworkType unitTestFrameworkType = UnitTestFrameworkType.XUnit,
+            bool overWriteTests = false)
         {
             if (string.IsNullOrEmpty(path))
                 throw new ArgumentException("path is null");
@@ -25,10 +29,13 @@
             if (!selectedAssembly.Any())
                 throw new ArgumentException("selectedAssemly not given");
 
-            var baseUnitTestWriter = new DefaultUnitTestWriter();
-            baseUnitTestWriter.SetAssertType(assertType);
-            baseUnitTestWriter.SetUnitTestFrameworkType(unitTestFrameworkType);
-            baseUnitTestWriter.CreateUnitTestFile(path, selectedAssembly);
+            new DefaultUnitTestWriter()
+                .SetTestAssertType(assertType)
+                .SetTestFrameworkType(unitTestFrameworkType)
+                .SetCreationPath(path)
+                .SetAssemblies(selectedAssembly)
+                .OverwriteTests(overWriteTests)
+                .Write();
         }
 
         /// <summary>
@@ -41,7 +48,8 @@
         public static void CreateUnitTestFilesFromAssemblies(
             string path,
             string[] selectedAssembly,
-            BaseUnitTestWriter baseUnitTestWriter)
+            BaseUnitTestWriter baseUnitTestWriter,
+            bool overWriteTests = false)
         {
             if (string.IsNullOrEmpty(path))
                 throw new ArgumentException("path is null");
@@ -52,7 +60,12 @@
             if (!selectedAssembly.Any())
                 throw new ArgumentException("selectedAssemly not given");
 
-            baseUnitTestWriter.CreateUnitTestFile(path, selectedAssembly);
+
+            baseUnitTestWriter
+                .SetCreationPath(path)
+                .SetAssemblies(selectedAssembly)
+                .OverwriteTests(overWriteTests)
+                .Write();
         }
 
         /// <summary>
@@ -63,12 +76,18 @@
         /// <param name="unitTestFrameworkType">Select unitTest Framework</param>
         public static void CreateUnitTestFilesFromAssemblies(
             IDictionary<string, string> selectedAssembly,
-            AssertType assertType,
-            UnitTestFrameworkType unitTestFrameworkType)
+            AssertType assertType = AssertType.Assert,
+            UnitTestFrameworkType unitTestFrameworkType = UnitTestFrameworkType.XUnit,
+            bool overWriteTests = false)
         {
             foreach (var assembly in selectedAssembly)
             {
-                CreateUnitTestFilesFromAssemblies(assembly.Value, new[] { assembly.Key }, assertType, unitTestFrameworkType);
+                CreateUnitTestFilesFromAssemblies(
+                    assembly.Value,
+                    new[] { assembly.Key },
+                    assertType,
+                    unitTestFrameworkType,
+                    overWriteTests);
             }
         }
 
@@ -79,11 +98,16 @@
         /// <param name="baseUnitTestWriter"></param>
         public static void CreateUnitTestFilesFromAssemblies(
             IDictionary<string, string> selectedAssembly,
-            BaseUnitTestWriter baseUnitTestWriter)
+            BaseUnitTestWriter baseUnitTestWriter,
+            bool overWriteTests = false)
         {
             foreach (var assembly in selectedAssembly)
             {
-                CreateUnitTestFilesFromAssemblies(assembly.Value, new[] { assembly.Key }, baseUnitTestWriter);
+                CreateUnitTestFilesFromAssemblies(
+                    assembly.Value,
+                    new[] { assembly.Key },
+                    baseUnitTestWriter,
+                    overWriteTests);
             }
         }
     }
