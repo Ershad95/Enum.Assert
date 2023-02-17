@@ -134,13 +134,11 @@ namespace TestCreator.Core
                $"{@enum.Name}_{convertNumberToText}NotDefined_EnumCanNotMapTheValue()" +
                $"\n        {{\n");
 
-            var parts = type.Split(".");
-            var enumVariableName = parts[parts.Length - 1];
-            var firstCharacter = enumVariableName.First().ToString().ToLower();
-            enumVariableName = $"{firstCharacter}{enumVariableName[1..enumVariableName.Length]}";
+            var variableType = Enum.GetUnderlyingType(@enum as Type).Name.ToLower()
+                .Replace("int32","int");
             fileContent.Append(
                 $"            // Arrange\n " +
-                $"           const int {enumItem.ToLower()} = {valueItem};\n" +
+                $"           const {variableType} {enumItem.ToLower()} = {valueItem};\n" +
                 $"            // Act\n " +
                 $"           bool actual = Enum.IsDefined(typeof({type}), {enumItem.ToLower()});\n" +
                 $"            // Assert \n" +
