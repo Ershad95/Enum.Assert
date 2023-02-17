@@ -65,14 +65,20 @@ namespace TestCreator.Core
         {
             WriteClassAttribute(fileContent);
             fileContent.Append($"\n    public class {@enum.Name}UnitTest \n    {{\n");
-            foreach (var item in @enum.GetEnumValues())
+            var enums = @enum.GetEnumValues();
+            if (enums.Length > 0)
             {
-                var titleItem = (string)Convert.ChangeType(item, typeof(string));
-                var valueItem = (long)Convert.ChangeType(item, typeof(long));
-                WriteMethodTest(fileContent, titleItem, valueItem, @enum);
+                string titleItem="";
+                long valueItem = 0;
+                foreach (var item in enums)
+                {
+                    titleItem = (string)Convert.ChangeType(item, typeof(string));
+                    valueItem = (long)Convert.ChangeType(item, typeof(long));
+                    WriteMethodTest(fileContent, titleItem, valueItem, @enum);
+                }
+                WriteBorderMethodTest(fileContent, titleItem, valueItem+1, @enum);
+                fileContent.Append(" \n    }");
             }
-
-            fileContent.Append(" \n    }");
         }
         /// <summary>
         /// you can customize all of the test methods
@@ -109,8 +115,37 @@ namespace TestCreator.Core
             fileContent.Append("\n        }");
             fileContent.Append('\n');
         }
+        protected virtual void WriteBorderMethodTest(StringBuilder fileContent,
+            string enumItem,
+           long valueItem,
+           MemberInfo @enum)
+        {
+            WriteMethodAttribute(fileContent);
+            var convertNumberToText = ConvertNumberToText(valueItem);
+            var type = @enum.DeclaringType is null ? @enum.Name : $"{@enum.DeclaringType.Name}.{@enum.Name}";
+            fileContent.Append($"        public void " +
+               $"{@enum.Name}_{convertNumberToText}NotDefined_EnumCanNotMapTheValue()" +
+               $"\n        {{\n");
+
+            var parts = type.Split(".");
+            var enumVariableName = parts[parts.Length - 1];
+            var firstCharacter = enumVariableName.First().ToString().ToLower();
+            enumVariableName = $"{firstCharacter}{enumVariableName[1..enumVariableName.Length]}";
+            fileContent.Append(
+                $"            // Arrange\n " +
+                $"           const int {enumItem.ToLower()} = {valueItem};\n" +
+                $"            // Act\n " +
+                $"           bool actual = Enum.IsDefined(typeof({type}), {enumItem.ToLower()});\n" +
+                $"            // Assert \n" +
+                $"            {WriteAssertOperation(false)};");
+
+            fileContent.Append("\n        }");
+            fileContent.Append('\n');
+        }
         protected virtual void WriteNamespace(StringBuilder fileContent, Type @enum)
         {
+
+            fileContent.Append($"using System;\n");
             WriteTestFrameWorkNameSpace(fileContent);
             WriteEnumNameSpace(fileContent, @enum);
             WriteAssertNameSpace(fileContent);
@@ -121,15 +156,29 @@ namespace TestCreator.Core
         {
             fileContent.Append($"using {@enum.Namespace};\n");
         }
-        private string WriteAssertOperation()
+        private string WriteAssertOperation(bool isPosativeCondition = true)
         {
-            return _assertType switch
+            if (isPosativeCondition)
             {
-                AssertType.Assert => "Assert.True(actual)",
-                AssertType.Shouldly => "actual.ShouldBeTrue()",
-                AssertType.FluentAssertions => "actual.Should().Be(true)",
-                _ => throw new InvalidEnumArgumentException()
-            };
+                return _assertType switch
+                {
+                    AssertType.Assert => "Assert.True(actual)",
+                    AssertType.Shouldly => "actual.ShouldBeTrue()",
+                    AssertType.FluentAssertions => "actual.Should().Be(true)",
+                    _ => throw new InvalidEnumArgumentException()
+                };
+            }
+            else
+            {
+                return _assertType switch
+                {
+                    AssertType.Assert => "Assert.False(actual)",
+                    AssertType.Shouldly => "actual.ShouldBeFalse()",
+                    AssertType.FluentAssertions => "actual.Should().Be(false)",
+                    _ => throw new InvalidEnumArgumentException()
+                };
+            }
+
         }
         private void WriteMethodAttribute(StringBuilder fileContent)
         {
