@@ -20,6 +20,12 @@
             UnitTestFrameworkType unitTestFrameworkType = UnitTestFrameworkType.XUnit,
             bool overWriteTests = false)
         {
+            if (!Enum.IsDefined(typeof(AssertType), assertType))
+                throw new ArgumentException("AssertType is not valid");
+
+            if (!Enum.IsDefined(typeof(UnitTestFrameworkType), unitTestFrameworkType))
+                throw new ArgumentException("UnitTestFrameworkType is not valid");
+
             if (string.IsNullOrEmpty(path))
                 throw new ArgumentException("path is null");
 
