@@ -30,9 +30,28 @@ Automatic Create Enum unit test with Refelection and XUnit in .net core/C# , Cre
             BaseUnitTestWriter baseUnitTestWriter,
             bool overWriteTests = false)</pre>
 
-##### overLoad Of Extensions IServiceCollection: 
+##### overLoad Of Extensions for IServiceCollection: 
 
-<pre>static void WriteUnitTest(this IServiceCollection services, string path, string[] selectedAssembly)</pre>
+<pre>static void WriteUnitTest(this IServiceCollection services,
+            string path,
+            string[] selectedAssembly,
+            AssertType assertType,
+            UnitTestFrameworkType unitTestFrameworkType,
+            bool overWriteTests = false)</pre>
+            
+<pre>static void WriteUnitTest(this IServiceCollection services,
+            IDictionary<string, string> selectedAssembly,
+            AssertType assertType,
+            UnitTestFrameworkType unitTestFrameworkType,
+            bool overWriteTests = false)</pre>
+            
+<pre>static void WriteUnitTest(this IServiceCollection services,
+            string path,
+            string[] selectedAssembly,
+            BaseUnitTestWriter baseUnitTestWriter,
+            bool overWriteTests = false)</pre>
 
-<pre>static void WriteUnitTest(this IServiceCollection services, IDictionary<string, string> selectedAssembly)</pre>
-
+<pre>static void WriteUnitTest(this IServiceCollection services,
+            IDictionary<string, string> selectedAssembly,
+            BaseUnitTestWriter baseUnitTestWriter,
+            bool overWriteTests = false)</pre>
