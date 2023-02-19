@@ -164,9 +164,9 @@ namespace TestCreator.Core
         {
             fileContent.Append($"using {@enum.Namespace};\n");
         }
-        private string WriteAssertOperation(bool isPosativeCondition = true)
+        private string WriteAssertOperation(bool positiveCondition = true)
         {
-            if (isPosativeCondition)
+            if (positiveCondition)
             {
                 return _assertType switch
                 {
