@@ -109,10 +109,10 @@ namespace TestCreator.Core
                $"{@enum.Name}_Check{enumItem}Value_ValueEqualsTo{convertNumberToText}()" +
                $"\n        {{\n");
 
-            var parts = type.Split(".");
+            var parts = type.Split('.');
             var enumVariableName = parts[parts.Length - 1];
             var firstCharacter = enumVariableName.First().ToString().ToLower();
-            enumVariableName = $"{firstCharacter}{enumVariableName[1..enumVariableName.Length]}";
+            enumVariableName = $"{firstCharacter}{enumVariableName.Substring(1,enumVariableName.Length-1)}";
             fileContent.Append(
                 $"            // Arrange\n " +
                 $"           const int {enumItem.ToLower()} = {valueItem};\n" +
