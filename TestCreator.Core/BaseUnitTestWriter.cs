@@ -83,9 +83,9 @@ namespace TestCreator.Core
                 }
                 
                 ++maxValue;
-                WriteBorderMethodTest(fileContent, titleItem, maxValue, @enum);
+                WriteBorderMethodTest(fileContent, "outOfContextValue", maxValue, @enum);
                 --minValue;
-                WriteBorderMethodTest(fileContent, titleItem, minValue, @enum);
+                WriteBorderMethodTest(fileContent, "outOfContextValue", minValue, @enum);
 
                 fileContent.Append(" \n    }");
             }
@@ -130,6 +130,10 @@ namespace TestCreator.Core
            long valueItem,
            MemberInfo @enum)
         {
+            var variableType = Enum.GetUnderlyingType(@enum as Type ?? throw new InvalidOperationException()).Name.ToLower()
+                .Replace("int32","int");
+            if(variableType == "byte" && valueItem<0)
+                return;
             WriteMethodAttribute(fileContent);
             var convertNumberToText = ConvertNumberToText(valueItem);
             var type = @enum.DeclaringType is null ? @enum.Name : $"{@enum.DeclaringType.Name}.{@enum.Name}";
@@ -137,13 +141,12 @@ namespace TestCreator.Core
                $"{@enum.Name}_{convertNumberToText}NotDefined_EnumCanNotMapTheValue()" +
                $"\n        {{\n");
 
-            var variableType = Enum.GetUnderlyingType(@enum as Type ?? throw new InvalidOperationException()).Name.ToLower()
-                .Replace("int32","int");
+     
             fileContent.Append(
                 $"            // Arrange\n " +
-                $"           const {variableType} {enumItem.ToLower()} = {valueItem};\n" +
+                $"           const {variableType} {enumItem} = {valueItem};\n" +
                 $"            // Act\n " +
-                $"           bool actual = Enum.IsDefined(typeof({type}), {enumItem.ToLower()});\n" +
+                $"           var actual = Enum.IsDefined(typeof({type}), {enumItem});\n" +
                 $"            // Assert \n" +
                 $"            {WriteAssertOperation(false)};");
 
