@@ -68,9 +68,9 @@ namespace TestCreator.Core
             var enums = @enum.GetEnumValues();
             if (enums.Length > 0)
             {
-                string titleItem = "";
-                long minValue = long.MaxValue;
-                long maxValue = long.MinValue;
+                var titleItem = "";
+                var minValue = long.MaxValue;
+                var maxValue = long.MinValue;
 
                 foreach (var item in enums)
                 {
@@ -81,8 +81,11 @@ namespace TestCreator.Core
                     if (minValue > valueItem) minValue = valueItem;
                     if (maxValue < valueItem) maxValue = valueItem;
                 }
-                WriteBorderMethodTest(fileContent, titleItem, ++maxValue, @enum);
-                WriteBorderMethodTest(fileContent, titleItem, --minValue, @enum);
+                
+                ++maxValue;
+                WriteBorderMethodTest(fileContent, titleItem, maxValue, @enum);
+                --minValue;
+                WriteBorderMethodTest(fileContent, titleItem, minValue, @enum);
 
                 fileContent.Append(" \n    }");
             }
@@ -134,7 +137,7 @@ namespace TestCreator.Core
                $"{@enum.Name}_{convertNumberToText}NotDefined_EnumCanNotMapTheValue()" +
                $"\n        {{\n");
 
-            var variableType = Enum.GetUnderlyingType(@enum as Type).Name.ToLower()
+            var variableType = Enum.GetUnderlyingType(@enum as Type ?? throw new InvalidOperationException()).Name.ToLower()
                 .Replace("int32","int");
             fileContent.Append(
                 $"            // Arrange\n " +

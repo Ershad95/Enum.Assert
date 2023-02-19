@@ -12,6 +12,7 @@
         /// <param name="selectedAssembly">List Of Ass that you want Find Enums and Write Unit tests</param>
         /// <param name="assertType">Select Assert Type</param>
         /// <param name="unitTestFrameworkType">Select unitTest Framework</param>
+        /// <param name="overWriteTests"></param>
         /// <exception cref="ArgumentException">when Entry data is invalid</exception>
         public static void CreateUnitTestFilesFromAssemblies(
             string path,
@@ -50,6 +51,7 @@
         /// <param name="path"></param>
         /// <param name="selectedAssembly">List Of Ass that you want Find Enums and Write Unit tests</param>
         /// <param name="baseUnitTestWriter"></param>
+        /// <param name="overWriteTests"></param>
         /// <exception cref="ArgumentException"></exception>
         public static void CreateUnitTestFilesFromAssemblies(
             string path,
@@ -80,6 +82,7 @@
         /// <param name="selectedAssembly">key : Assembly Name , Value : path of unitTest creation</param>
         /// <param name="assertType">Select Assert Type</param>
         /// <param name="unitTestFrameworkType">Select unitTest Framework</param>
+        /// <param name="overWriteTests"></param>
         public static void CreateUnitTestFilesFromAssemblies(
             IDictionary<string, string> selectedAssembly,
             AssertType assertType = AssertType.Assert,
@@ -102,6 +105,7 @@
         /// </summary>
         /// <param name="selectedAssembly">key : Assembly Name , Value : path of unitTest creation</param>
         /// <param name="baseUnitTestWriter"></param>
+        /// <param name="overWriteTests"></param>
         public static void CreateUnitTestFilesFromAssemblies(
             IDictionary<string, string> selectedAssembly,
             BaseUnitTestWriter baseUnitTestWriter,
