@@ -18,26 +18,31 @@ namespace TestCreator.Core
             _assertType = assertType;
             return this;
         }
+
         internal BaseUnitTestWriter SetTestFrameworkType(UnitTestFrameworkType unitTestFrameworkType)
         {
             _testFrameworkType = unitTestFrameworkType;
             return this;
         }
+
         internal BaseUnitTestWriter SetCreationPath(string path)
         {
             _path = path;
             return this;
         }
+
         internal BaseUnitTestWriter SetAssemblies(IEnumerable<string> selectedAssembly)
         {
             _selectedAssembly = selectedAssembly;
             return this;
         }
+
         internal BaseUnitTestWriter OverwriteTests(bool overWriteTests)
         {
             _overWriteTests = overWriteTests;
             return this;
         }
+
         internal (bool status, Exception exception) Write()
         {
             try
@@ -48,6 +53,7 @@ namespace TestCreator.Core
                     var unitTestFileContent = CreateContentOfFile(@enum);
                     File.WriteAllText(@$"{_path}/{@enum.Name}UnitTest.cs", unitTestFileContent);
                 }
+
                 return (true, null);
             }
             catch (Exception exception)
@@ -81,7 +87,7 @@ namespace TestCreator.Core
                     if (minValue > valueItem) minValue = valueItem;
                     if (maxValue < valueItem) maxValue = valueItem;
                 }
-                
+
                 ++maxValue;
                 WriteBorderMethodTest(fileContent, "outOfContextValue", maxValue, @enum);
                 --minValue;
@@ -90,6 +96,7 @@ namespace TestCreator.Core
                 fileContent.Append(" \n    }");
             }
         }
+
         /// <summary>
         /// you can customize all of the test methods
         /// </summary>
@@ -106,13 +113,13 @@ namespace TestCreator.Core
             var convertNumberToText = ConvertNumberToText(valueItem);
             var type = @enum.DeclaringType is null ? @enum.Name : $"{@enum.DeclaringType.Name}.{@enum.Name}";
             fileContent.Append($"        public void " +
-               $"{@enum.Name}_Check{enumItem}Value_ValueEqualsTo{convertNumberToText}()" +
-               $"\n        {{\n");
+                               $"{@enum.Name}_Check{enumItem}Value_ValueEqualsTo{convertNumberToText}()" +
+                               $"\n        {{\n");
 
             var parts = type.Split('.');
             var enumVariableName = parts[parts.Length - 1];
             var firstCharacter = enumVariableName.First().ToString().ToLower();
-            enumVariableName = $"{firstCharacter}{enumVariableName.Substring(1,enumVariableName.Length-1)}";
+            enumVariableName = $"{firstCharacter}{enumVariableName.Substring(1, enumVariableName.Length - 1)}";
             fileContent.Append(
                 $"            // Arrange\n " +
                 $"           const int {enumItem.ToLower()} = {valueItem};\n" +
@@ -125,23 +132,24 @@ namespace TestCreator.Core
             fileContent.Append("\n        }");
             fileContent.Append('\n');
         }
+
         protected virtual void WriteBorderMethodTest(StringBuilder fileContent,
             string enumItem,
-           long valueItem,
-           MemberInfo @enum)
+            long valueItem,
+            MemberInfo @enum)
         {
             var variableType = Enum.GetUnderlyingType(@enum as Type ?? throw new InvalidOperationException()).Name.ToLower()
-                .Replace("int32","int");
-            if(variableType == "byte" && valueItem<0)
+                .Replace("int32", "int");
+            if (variableType == "byte" && valueItem < 0)
                 return;
             WriteMethodAttribute(fileContent);
             var convertNumberToText = ConvertNumberToText(valueItem);
             var type = @enum.DeclaringType is null ? @enum.Name : $"{@enum.DeclaringType.Name}.{@enum.Name}";
             fileContent.Append($"        public void " +
-               $"{@enum.Name}_{convertNumberToText}NotDefined_EnumCanNotMapTheValue()" +
-               $"\n        {{\n");
+                               $"{@enum.Name}_{convertNumberToText}NotDefined_EnumCanNotMapTheValue()" +
+                               $"\n        {{\n");
 
-     
+
             fileContent.Append(
                 $"            // Arrange\n " +
                 $"           const {variableType} {enumItem} = {valueItem};\n" +
@@ -153,9 +161,9 @@ namespace TestCreator.Core
             fileContent.Append("\n        }");
             fileContent.Append('\n');
         }
+
         protected virtual void WriteNamespace(StringBuilder fileContent, Type @enum)
         {
-
             fileContent.Append($"using System;\n");
             WriteTestFrameWorkNameSpace(fileContent);
             WriteEnumNameSpace(fileContent, @enum);
@@ -167,6 +175,7 @@ namespace TestCreator.Core
         {
             fileContent.Append($"using {@enum.Namespace};\n");
         }
+
         private string WriteAssertOperation(bool positiveCondition = true)
         {
             if (positiveCondition)
@@ -189,8 +198,8 @@ namespace TestCreator.Core
                     _ => throw new InvalidEnumArgumentException()
                 };
             }
-
         }
+
         private void WriteMethodAttribute(StringBuilder fileContent)
         {
             switch (_testFrameworkType)
@@ -208,6 +217,7 @@ namespace TestCreator.Core
                     throw new ConstraintException();
             }
         }
+
         private void WriteClassAttribute(StringBuilder fileContent)
         {
             switch (_testFrameworkType)
@@ -224,6 +234,7 @@ namespace TestCreator.Core
                     throw new ConstraintException();
             }
         }
+
         private void WriteAssertNameSpace(StringBuilder fileContent)
         {
             switch (_assertType)
@@ -241,6 +252,7 @@ namespace TestCreator.Core
                     throw new ConstraintException();
             }
         }
+
         private void WriteTestFrameWorkNameSpace(StringBuilder fileContent)
         {
             switch (_testFrameworkType)
@@ -256,6 +268,7 @@ namespace TestCreator.Core
                     throw new ConstraintException();
             }
         }
+
         private static IEnumerable<TypeInfo> GetEnumsFromAssemblies(IEnumerable<string> selectedAssembly)
         {
             var allDependency = AppDomain.CurrentDomain.GetAssemblies();
@@ -271,11 +284,17 @@ namespace TestCreator.Core
             var allEnums = new List<TypeInfo>();
             foreach (var assembly in assemblies)
             {
-                allEnums.AddRange(assembly.DefinedTypes.Where(x => x.IsEnum && x.IsVisible));
+                allEnums.AddRange(assembly.DefinedTypes
+                    .Where(x => x.IsEnum && x.IsVisible &&
+                                !x.CustomAttributes.Any(attributeData =>
+                                    attributeData.AttributeType!.FullName!
+                                        .Contains("System.CodeDom.Compiler.GeneratedCodeAttribute"))
+                ));
             }
 
             return allEnums;
         }
+
         private static string ConvertNumberToText(long valueItem)
         {
             var positiveValue = Math.Abs(valueItem);
@@ -298,6 +317,7 @@ namespace TestCreator.Core
                 result = $"Negative{result}";
             return result;
         }
+
         private string CreateContentOfFile(Type @enum)
         {
             var fileContent = new StringBuilder();
