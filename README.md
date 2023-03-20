@@ -1,11 +1,13 @@
 # Enum.Assert  
 
 ## Project Description
-Automatic Create unit test and save it in .cs files by find Enums with Refelection and XUnit in .net core/C# , Creative Code With ErshadRaoufi
+This is a C# library called "Enum.Assert" that allows you to easily generate unit tests for your enum types. It contains a single public class called "TestWriter" with four static methods that can be used to generate unit tests for enums in different ways.
+
+The namespace for the library is "TestCreator.Core". The library uses two enums called "AssertType" and "UnitTestFrameworkType" to specify the type of assertions to be used in the generated unit tests and the type of unit test framework to use, respectively.Creative Code With ErshadRaoufi
 
 ### Overview
-##### overLoad Of client api : 
-
+##### The "TestWriter" class contains four static methods for generating unit tests:
+ 
 <pre>static void CreateUnitTestFilesFromAssemblies(
             string path,
             string[] selectedAssembly,
